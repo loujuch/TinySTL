@@ -10,6 +10,9 @@ namespace stl {
 
 // 使用伙伴系统进行分配
 class Alloc {
+public:
+	using size_type = size_t;
+	using difference_type = ::ptrdiff_t;
 private:
 	class AllocInstance {
 		// 预分配内存
@@ -34,7 +37,7 @@ private:
 			return *((char **)ptr);
 		}
 	public:
-		AllocInstance(std::size_t size) :
+		AllocInstance(size_type size) :
 			m_buffer_start_(static_cast<char *>(::operator new(size))),
 			m_buffer_end_(m_buffer_start_ + size),
 			m_pool_list_head_{ nullptr },
@@ -70,29 +73,29 @@ private:
 		}
 
 		// 分配n字节内存
-		inline void *allocate(std::size_t n, const void *p = nullptr) {
+		inline void *allocate(size_type n, const void *p = nullptr) {
 			assert(n <= max_block_size);
 		}
 
 		// 回收n字节内存
-		inline void deallocate(void *p, std::size_t n) {
+		inline void deallocate(void *p, size_type n) {
 		}
 	}; // class Memory
 public:
-	static constexpr std::size_t memory_pool_size = 32 * 1024;
-	static constexpr std::size_t max_block_size = 1024;
-	static constexpr std::size_t min_block_size = 8;
+	static constexpr size_type memory_pool_size = 32 * 1024;
+	static constexpr size_type max_block_size = 1024;
+	static constexpr size_type min_block_size = 8;
 private:
 	// 预分配内存
 	static thread_local AllocInstance m_alloc_instance_;
 public:
 	// 分配n字节内存
-	inline void *allocate(std::size_t n, const void *p = nullptr) {
+	inline void *allocate(size_type n, const void *p = nullptr) {
 		return m_alloc_instance_.allocate(n, p);
 	}
 
 	// 回收n字节内存
-	inline void deallocate(void *p, std::size_t n) {
+	inline void deallocate(void *p, size_type n) {
 		m_alloc_instance_.deallocate(p, n);
 	}
 }; // class Alloc
