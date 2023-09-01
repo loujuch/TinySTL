@@ -99,7 +99,7 @@ __distance(RandomAccessIterator first, RandomAccessIterator last, random_access_
 
 // 获取两迭代器间距离
 template <typename InputIterator>
-inline typename iterator_traits<InputIterator>::difference_type
+static inline typename iterator_traits<InputIterator>::difference_type
 distance(InputIterator first, InputIterator last) {
 	return __distance(first, last, iterator_category(first));
 }

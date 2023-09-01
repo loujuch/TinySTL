@@ -58,7 +58,7 @@ void test_fb(const stl::Vector<Test> &t) {
 	std::cout << std::endl;
 }
 
-int main() {
+void main_test() {
 	// 构造测试
 	stl::Vector<Test> test0;
 	test_show(test0);
@@ -73,6 +73,9 @@ int main() {
 	test_show(test3);
 	stl::Vector<Test> test4(std::move(test1));
 	test_show(test4);
+
+	stl::Vector<Test> test5(test4.begin() + 1, test4.end() - 1);
+	test_show(test5);
 
 	test0 = test4;
 	test_show(test0);
@@ -133,6 +136,8 @@ int main() {
 
 	test0.insert(test0.begin(), Test(0));
 	test_show(test0);
+	test0.insert(test0.begin(), Test(0));
+	test_show(test0);
 	test0.insert(test0.begin(), 10, Test(1));
 	test_show(test0);
 	test0.insert(test0.begin(), test);
@@ -172,5 +177,9 @@ int main() {
 	stl::swap(test0, test1);
 	test_show(test0);
 	test_show(test1);
+}
+
+int main() {
+	main_test();
 	return 0;
 }

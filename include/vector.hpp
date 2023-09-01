@@ -62,6 +62,20 @@ public:
 		uninitialized_fill(x, m_start_, m_last_, m_allocator_);
 	}
 
+	template <typename InputIterator>
+	explicit Vector(InputIterator first, InputIterator last) :
+		m_start_(nullptr),
+		m_last_(nullptr),
+		m_end_of_storage_(nullptr) {
+		auto n = distance(first, last);
+
+		m_start_ = iterator(m_allocator_.allocate(n));
+		m_last_ = m_start_ + n;
+		m_end_of_storage_ = m_last_;
+
+		uninitialized_copy(first, last, m_start_, m_allocator_);
+	}
+
 	Vector(const Vector<T, ALLOCATOR> &v) :
 		m_start_(m_allocator_.allocate(v.capacity())),
 		m_last_(m_start_ + v.size()),
@@ -82,7 +96,7 @@ public:
 		clear();
 	}
 
-	inline Vector &operator=(const Vector<T, ALLOCATOR> &v) {
+	inline Vector<T, ALLOCATOR> &operator=(const Vector<T, ALLOCATOR> &v) {
 		if(this != &v) {
 			clear();
 
@@ -95,7 +109,7 @@ public:
 		return *this;
 	}
 
-	inline Vector &operator=(Vector<T, ALLOCATOR> &&v) {
+	inline Vector<T, ALLOCATOR> &operator=(Vector<T, ALLOCATOR> &&v) {
 		if(this != &v) {
 			clear();
 
@@ -362,6 +376,8 @@ public:
 			uninitialized_fill_n(elem, p + dis, n, m_allocator_);
 			uninitialized_move(pos, m_last_, p + dis + n, m_allocator_);
 
+			clear();
+
 			m_start_ = p;
 			m_last_ = p + need_cap;
 			m_end_of_storage_ = p + ncap;
@@ -417,6 +433,8 @@ public:
 			uninitialized_copy(first, last, p + dis, m_allocator_);
 			uninitialized_move(pos, m_last_, p + dis + n, m_allocator_);
 
+			clear();
+
 			m_start_ = p;
 			m_last_ = p + need_cap;
 			m_end_of_storage_ = p + ncap;
@@ -470,6 +488,7 @@ public:
 
 	iterator erase(iterator first, iterator last) {
 		auto n = distance(first, last);
+		initialized_destory(first, last, m_allocator_);
 		uninitialized_move(last, m_last_, first, m_allocator_);
 		m_last_ -= n;
 		return first;
