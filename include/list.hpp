@@ -452,8 +452,9 @@ public:
 		erase_nodes(first, last);
 		auto p = first.m_ptr_;
 		while(p != nullptr) {
+			auto q = p->m_next_;
 			m_allocator_.deallocate(p, 1);
-			p = p->m_next_;
+			p = q;
 		}
 		m_length_ -= n;
 		return last;
