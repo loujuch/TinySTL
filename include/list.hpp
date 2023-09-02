@@ -97,7 +97,7 @@ public:
 	}
 }; // class ListIterator
 
-template <typename T, typename ALLOC = Allocator<Node<T>>>
+template <typename T, typename ALLOC = Allocator<T>>
 class List {
 public:
 	using value_type = T;
@@ -111,7 +111,7 @@ public:
 	using iterator = ListIterator<value_type>;
 	using const_iterator = const ListIterator<value_type>;
 private:
-	ALLOC m_allocator_;
+	typename ALLOC::template rebind<Node<T>>::other m_allocator_;
 
 	iterator m_head_;
 	iterator m_tail_;
@@ -271,9 +271,11 @@ public:
 	}
 
 	void swap(List<T, ALLOC> &l) {
-		std::swap(l.m_head_, m_head_);
-		std::swap(l.m_tail_, m_tail_);
-		std::swap(l.m_length_, m_length_);
+		if(this != &l) {
+			std::swap(l.m_head_, m_head_);
+			std::swap(l.m_tail_, m_tail_);
+			std::swap(l.m_length_, m_length_);
+		}
 	}
 
 	template <typename U, typename P>

@@ -329,41 +329,7 @@ public:
 
 	// 增删操作
 	iterator insert(iterator pos, const value_type &elem) {
-		if(m_last_ >= m_end_of_storage_) {
-			// 需要新空间
-			auto cap = size() + 1;
-			auto ncap = new_memory(cap);
-			auto p = m_allocator_.allocate(ncap);
-			auto dis = distance(m_start_, pos);
-
-			// 复制
-			uninitialized_move(m_start_, pos, p, m_allocator_);
-			m_allocator_.construct(p + dis, elem);
-			uninitialized_move(pos, m_last_, p + dis + 1);
-
-			// 清除
-			clear();
-
-			// 设置新的位置
-			m_start_ = p;
-			m_last_ = p + cap;
-			m_end_of_storage_ = p + ncap;
-
-			return m_start_ + dis;
-		} else {
-			// 不需要新空间
-
-			// 复制
-			for(auto p = m_last_;p != pos;--p) {
-				m_allocator_.construct(p, std::move(*(p - 1)));
-			}
-			m_allocator_.construct(pos, elem);
-
-			// 设置新的位置
-			++m_last_;
-
-			return pos;
-		}
+		return insert(pos, 1, elem);
 	}
 
 	iterator insert(iterator pos, size_type n, const value_type &elem) {
