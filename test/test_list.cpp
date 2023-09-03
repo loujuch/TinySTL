@@ -5,34 +5,56 @@
 
 class Test {
 	int n;
+
+	static int create;
+	static int destory;
 public:
 	Test() :n(0) {
+		++create;
 		// std::cout << "default ctor: " << n << std::endl;
 	}
 
 	explicit Test(int m) :n(m) {
+		++create;
 		// std::cout << "arg ctor: " << n << std::endl;
 	}
 
 	Test(const Test &t) :n(t.n) {
+		++create;
 		// std::cout << "copy ctor: " << n << std::endl;
 	}
 
 	Test(Test &&t) :n(t.n) {
-		// std::cout << "move ctor: " << n << std::endl;
+		++create;
 		t.n = 0;
-	}
-
-	int getn() const {
-		return n;
+		// std::cout << "copy ctor: " << n << std::endl;
 	}
 
 	void set(int ns) {
 		n = ns;
 	}
 
+	int getn() const {
+		return n;
+	}
+
 	void print() const {
 		std::cout << "print: " << n << std::endl;
+	}
+
+	Test &operator=(const Test &t) {
+		if(this != &t) {
+			n = t.n;
+		}
+		return *this;
+	}
+
+	Test &operator=(Test &&t) {
+		if(this != &t) {
+			n = t.n;
+			t.n = 0;
+		}
+		return *this;
 	}
 
 	bool operator==(const Test &t) const {
@@ -43,14 +65,18 @@ public:
 		return !operator==(t);
 	}
 
-	// bool operator<(const Test &t) const {
-	// 	return n < t.n;
-	// }
-
 	~Test() {
+		++destory;
 		// std::cout << "dtor: " << n << std::endl;
 	}
+
+	static void print_static() {
+		std::cout << "create: " << create << " destory: " << destory << std::endl;
+	}
 };
+
+int Test::create = 0;
+int Test::destory = 0;
 
 void show(const stl::List<Test> &t) {
 	std::cout << "size: " << t.size() << std::endl;
@@ -303,5 +329,6 @@ void main_test() {
 
 int main() {
 	main_test();
+	Test::print_static();
 	return 0;
 }

@@ -498,23 +498,38 @@ public:
 			return begin();
 		}
 		difference_type pos_front = pos - begin();
-		difference_type pos_back = pos - begin();
+		difference_type pos_back = end() - pos;
 		bool dis = pos_front < pos_back;
 		ready_memory(1, dis);
 		pos = m_first_ + pos_front;
 		if(dis) {
-			for(auto i = m_first_;i != pos;++i) {
-				m_buffer_allocator_.construct((i - 1).m_cur_, std::move(*(i)));
+			if(pos != m_first_) {
+				m_buffer_allocator_.construct((m_first_ - 1).m_cur_, std::move(*m_first_));
+
+				for(auto i = m_first_;i != pos;++i) {
+					*(i) = std::move(*(i + 1));
+				}
+
+				*(pos - 1) = std::move(elem);
+			} else {
+				m_buffer_allocator_.construct((m_first_ - 1).m_cur_, std::move(elem));
 			}
 			--m_first_;
 			--pos;
 		} else {
-			for(auto i = m_last_;i != pos;--i) {
-				m_buffer_allocator_.construct(i.m_cur_, std::move(*(i - 1)));
+			if(pos != m_last_) {
+				m_buffer_allocator_.construct((m_last_).m_cur_, std::move(*(m_last_ - 1)));
+
+				for(auto i = m_last_ - 1;i != pos;--i) {
+					*(i) = std::move(*(i - 1));
+				}
+
+				*pos = std::move(elem);
+			} else {
+				m_buffer_allocator_.construct((m_last_).m_cur_, std::move(elem));
 			}
 			++m_last_;
 		}
-		m_buffer_allocator_.construct(pos.m_cur_, elem);
 		return pos;
 	}
 
@@ -524,25 +539,88 @@ public:
 			return begin();
 		}
 		difference_type pos_front = pos - begin();
-		difference_type pos_back = pos - begin();
+		difference_type pos_back = end() - pos;
 		bool dis = pos_front < pos_back;
 		ready_memory(n, dis);
 		pos = m_first_ + pos_front;
 		if(dis) {
-			for(auto i = m_first_;i != pos;++i) {
-				m_buffer_allocator_.construct((i - n).m_cur_, *(i));
+			auto move_number = pos_front;
+
+			if(move_number > n) {
+				// 构造头部
+				auto p = m_first_;
+				auto q = m_first_ - n;
+				for(;q != m_first_;++p, ++q) {
+					m_buffer_allocator_.construct(q.m_cur_, std::move(*p));
+				}
+
+				// 赋值头部
+				for(;p != pos;++p, ++q) {
+					*q = std::move(*p);
+				}
+
+				// 赋值中部
+				for(auto p = m_first_ + move_number - n;p != pos;++p) {
+					*p = elem;
+				}
+			} else {
+				// 构造头部
+				for(auto p = m_first_, q = m_first_ - n;p != pos;++p, ++q) {
+					m_buffer_allocator_.construct(q.m_cur_, std::move(*p));
+				}
+
+				// 构造中部
+				for(auto p = m_first_ - n + move_number;p != m_first_;++p) {
+					m_buffer_allocator_.construct(p.m_cur_, elem);
+				}
+
+				// 赋值中部
+				for(auto p = m_first_;p != pos;++p) {
+					*p = elem;
+				}
 			}
+
 			m_first_ -= n;
 			pos -= n;
 		} else {
-			for(auto i = m_last_;i != pos;--i) {
-				m_buffer_allocator_.construct((i + n - 1).m_cur_, *(i - 1));
+			auto move_number = pos_back;
+
+			if(move_number > n) {
+				// 构造尾部
+				for(auto p = m_last_ - n, q = m_last_;p != m_last_;++p, ++q) {
+					m_buffer_allocator_.construct(q.m_cur_, std::move(*p));
+				}
+
+				// 赋值尾部
+				auto e = m_last_ - (move_number - n) - 1;
+				for(auto i = m_last_ - 1;i != e;--i) {
+					*(i) = std::move(*(i - n));
+				}
+
+				// 赋值中部
+				e = pos + n;
+				for(auto p = pos;p != e;++p) {
+					*p = elem;
+				}
+			} else {
+				// 构造尾部
+				for(auto p = pos, q = pos + n;p != m_last_;++p, ++q) {
+					m_buffer_allocator_.construct(q.m_cur_, std::move(*p));
+				}
+
+				// 构造中部
+				auto e = m_last_ + n - move_number;
+				for(auto p = m_last_;p != e;++p) {
+					m_buffer_allocator_.construct(p.m_cur_, elem);
+				}
+
+				// 赋值中部
+				for(auto p = pos;p != m_last_;++p) {
+					*p = elem;
+				}
 			}
+
 			m_last_ += n;
-		}
-		auto p = pos;
-		for(size_type i = 0;i < n;++i, ++p) {
-			m_buffer_allocator_.construct(p.m_cur_, elem);
 		}
 		return pos;
 	}
@@ -550,31 +628,94 @@ public:
 	template <typename InputIterator>
 	iterator insert(iterator pos, InputIterator first, InputIterator last) {
 		difference_type n = distance(first, last);
+
 		if(pos.m_map_ == nullptr) {
 			*this = std::move(self(first, last));
 			return begin();
 		}
 		difference_type pos_front = pos - begin();
-		difference_type pos_back = pos - begin();
+		difference_type pos_back = end() - pos;
 		bool dis = pos_front < pos_back;
 		ready_memory(n, dis);
 		pos = m_first_ + pos_front;
 		if(dis) {
-			for(auto i = m_first_;i != pos;++i) {
-				m_buffer_allocator_.construct((i - n).m_cur_, *(i));
+			auto move_number = pos_front;
+
+			if(move_number > n) {
+				// 构造头部
+				auto p = m_first_;
+				auto q = m_first_ - n;
+				for(;q != m_first_;++p, ++q) {
+					m_buffer_allocator_.construct(q.m_cur_, std::move(*p));
+				}
+
+				// 赋值头部
+				for(;p != pos;++p, ++q) {
+					*q = std::move(*p);
+				}
+
+				// 赋值中部
+				for(auto p = m_first_ + move_number - n, q = first;p != pos;++p, ++q) {
+					*p = *q;
+				}
+			} else {
+				// 构造头部
+				for(auto p = m_first_, q = m_first_ - n;p != pos;++p, ++q) {
+					m_buffer_allocator_.construct(q.m_cur_, std::move(*p));
+				}
+
+				// 构造中部
+				auto p = m_first_ - n + move_number;
+				auto q = first;
+				for(;p != m_first_;++p, ++q) {
+					m_buffer_allocator_.construct(p.m_cur_, *q);
+				}
+
+				// 赋值中部
+				for(;p != pos;++p, ++q) {
+					*p = *q;
+				}
 			}
+
 			m_first_ -= n;
 			pos -= n;
 		} else {
-			for(auto i = m_last_;i != pos;--i) {
-				m_buffer_allocator_.construct((i + n - 1).m_cur_, *(i - 1));
+			auto move_number = pos_back;
+
+			if(move_number > n) {
+				// 构造尾部
+				for(auto p = m_last_ - n, q = m_last_;p != m_last_;++p, ++q) {
+					m_buffer_allocator_.construct(q.m_cur_, std::move(*p));
+				}
+
+				// 赋值尾部
+				auto e = m_last_ - (move_number - n) - 1;
+				for(auto i = m_last_ - 1;i != e;--i) {
+					*(i) = std::move(*(i - n));
+				}
+
+				// 赋值中部
+				for(auto p = pos, q = first;q != last;++p, ++q) {
+					*p = *q;
+				}
+			} else {
+				// 构造尾部
+				for(auto p = pos, q = pos + n;p != m_last_;++p, ++q) {
+					m_buffer_allocator_.construct(q.m_cur_, std::move(*p));
+				}
+
+				// 构造中部
+				for(auto p = m_last_, q = first + move_number;q != last;++p, ++q) {
+					m_buffer_allocator_.construct(p.m_cur_, *q);
+				}
+
+				// 赋值中部
+				for(auto p = pos, q = first;p != m_last_;++p, ++q) {
+					*p = *q;
+				}
 			}
+
 			m_last_ += n;
-		}
-		auto p = pos;
-		auto q = first;
-		for(size_type i = 0;i < n;++i, ++p, ++q) {
-			m_buffer_allocator_.construct(p.m_cur_, *q);
 		}
 		return pos;
 	}
@@ -620,20 +761,26 @@ public:
 		difference_type n = distance(first, last);
 		bool dis = pos_front < pos_back;
 
-		for(auto p = first;p != last;++p) {
-			m_buffer_allocator_.destory(p.m_cur_);
-		}
-
 		if(dis) {
 			for(auto i = first;i != m_first_;--i) {
-				m_buffer_allocator_.construct((i + n - 1).m_cur_, std::move(*(i - 1)));
+				*(i + n - 1) = std::move(*(i - 1));
 			}
+
+			auto tmp = m_first_;
 			m_first_ += n;
+			for(auto p = tmp;p != m_first_;++p) {
+				m_buffer_allocator_.destory(p.m_cur_);
+			}
 		} else {
 			for(auto i = last;i != m_last_;++i) {
-				m_buffer_allocator_.construct((i - n).m_cur_, std::move(*i));
+				*(i - n) = std::move(*i);
 			}
+
+			auto tmp = m_last_;
 			m_last_ -= n;
+			for(auto p = m_last_;p != tmp;++p) {
+				m_buffer_allocator_.destory(p.m_cur_);
+			}
 		}
 		return last;
 	}
