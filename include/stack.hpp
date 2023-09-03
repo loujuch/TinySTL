@@ -52,7 +52,7 @@ public:
 		return m_container_.empty();
 	}
 
-	bool size() const {
+	typename Container::size_type size() const {
 		return m_container_.size();
 	}
 

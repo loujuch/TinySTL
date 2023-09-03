@@ -65,6 +65,10 @@ public:
 		return !operator==(t);
 	}
 
+	bool operator<(const Test &t) const {
+		return n < t.n;
+	}
+
 	~Test() {
 		++destory;
 		// std::cout << "dtor: " << n << std::endl;
@@ -318,6 +322,10 @@ void main_test() {
 
 	test_show(list1);
 	list1.reverse();
+	test_show(list1);
+
+	test_show(list1);
+	list1.sort();
 	test_show(list1);
 
 	test_show(list1);

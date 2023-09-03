@@ -4,8 +4,7 @@
 #include "iterator.hpp"
 #include "allocator.hpp"
 #include "uninitialized.hpp"
-
-// #include <iostream>
+#include "functional.hpp"
 
 namespace stl {
 
@@ -533,27 +532,7 @@ public:
 
 	// merge 元素比较次数小于 N+R-1
 	void merge(List<T, ALLOC> &other) {
-		if(this == &other || other.empty()) {
-			return;
-		}
-		auto m_first = m_head_;
-		auto o_first = other.m_head_;
-		while(o_first != other.m_tail_) {
-			while(m_first != m_tail_ && *m_first < *o_first) {
-				++m_first;
-			}
-			if(m_first == m_tail_) {
-				splice(m_first, other, o_first, other.m_tail_);
-				break;
-			}
-			auto o_last = o_first;
-			++o_last;
-			while(o_last != other.m_tail_ && !(*m_first < *o_last)) {
-				++o_last;
-			}
-			splice(m_first, other, o_first, o_last);
-			o_first = o_last;
-		}
+		merge(other, less<value_type>());
 	}
 
 	void merge(List<T, ALLOC> &&other) {
@@ -689,28 +668,7 @@ public:
 
 	// 排序
 	void sort() {
-		if(m_length_ <= 1) {
-			return;
-		}
-		List<T, ALLOC> carry;
-		List<T, ALLOC> counter[64];
-
-		size_type fill = 0;
-		while(!empty()) {
-			// 获取一个元素
-			carry.splice(carry.begin(), *this, begin());
-
-			size_type i = 0;
-			while(i < fill && !counter[i].empty()) {
-				carry.merge(counter[i++]);
-			}
-			carry.swap(counter[i]);
-			fill += fill == i;
-		}
-		for(size_type i = 1;i < fill;++i) {
-			counter[i].merge(counter[i - 1]);
-		}
-		counter[fill - 1].swap(*this);
+		sort(less<value_type>());
 	}
 
 	template <typename Compare>

@@ -2,6 +2,9 @@
 #define _QUEUE_HPP__
 
 #include "deque.hpp"
+#include "vector.hpp"
+#include "functional.hpp"
+#include "alogrithm.hpp"
 
 namespace stl {
 
@@ -60,7 +63,7 @@ public:
 		return m_container_.empty();
 	}
 
-	bool size() const {
+	typename Container::size_type size() const {
 		return m_container_.size();
 	}
 
@@ -84,7 +87,94 @@ public:
 	void swap(Queue &other) {
 		m_container_.swap(other.m_container_);
 	}
-}; // class Stack
+}; // class Queue
+
+template<class T,
+	class Container = Vector<T>,
+	class Compare = stl::less<typename Container::value_type>
+>
+class PriorityQueue {
+	Container m_container_;
+	Compare m_comparator_;
+public:
+	explicit PriorityQueue(const Compare &compare = Compare(),
+		const Container &cont = Container()) :m_container_(cont), m_comparator_(compare) {
+		make_heap(m_container_.begin(), m_container_.end(), m_comparator_);
+	}
+
+	explicit PriorityQueue(const Compare &compare, Container &&cont) :
+		m_container_(std::move(cont)), m_comparator_(compare) {
+		make_heap(m_container_.begin(), m_container_.end(), m_comparator_);
+	}
+
+	PriorityQueue(const PriorityQueue &other) :
+		PriorityQueue(other.m_comparator_, other.m_container_) {
+	}
+
+	PriorityQueue(PriorityQueue &&other) :
+		PriorityQueue(other.m_comparator_, std::move(other.m_container_)) {
+	}
+
+	template <typename InputIterator>
+	explicit PriorityQueue(InputIterator first, InputIterator last,
+		const Compare &compare = Compare()) :
+		PriorityQueue(compare, Container(first, last)) {
+	}
+
+	PriorityQueue &operator=(const PriorityQueue &other) {
+		if(this != &other) {
+			m_comparator_ = other.m_comparator_;
+			m_container_ = other.m_container_;
+		}
+		return *this;
+	}
+
+	PriorityQueue &operator=(PriorityQueue &&other) {
+		if(this != &other) {
+			m_comparator_ = other.m_comparator_;
+			m_container_ = std::move(other.m_container_);
+		}
+		return *this;
+	}
+
+	typename Container::const_reference top() const {
+		return m_container_.front();
+	}
+
+	bool empty() const {
+		return m_container_.empty();
+	}
+
+	typename Container::size_type size() const {
+		return m_container_.size();
+	}
+
+	void push(const T &value) {
+		m_container_.push_back(value);
+		push_heap(m_container_.begin(), m_container_.end());
+	}
+
+	void push(T &&value) {
+		m_container_.push_back(std::move(value));
+		push_heap(m_container_.begin(), m_container_.end());
+	}
+
+	void pop() {
+		pop_heap(m_container_.begin(), m_container_.end());
+		m_container_.pop_back();
+	}
+
+	template <typename ... Args>
+	void emplace(Args&& ... args) {
+		m_container_.emplace_back(std::forward<Args>(args)...);
+		push_heap(m_container_.begin(), m_container_.end());
+	}
+
+	void swap(PriorityQueue &other) {
+		std::swap(m_comparator_, other.m_comparator_);
+		m_container_.swap(other.m_container_);
+	}
+}; // class PriorityQueue
 
 } // namespace slk
 
