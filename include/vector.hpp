@@ -212,7 +212,7 @@ public:
 				size_type ncap = new_memory(n);
 				auto p = m_allocator_.allocate(ncap, m_start_);
 				if(m_start_ != nullptr) {
-					uninitialized_copy(m_start_, m_last_, p, m_allocator_);
+					uninitialized_move(m_start_, m_last_, p, m_allocator_);
 				}
 				clear();
 				m_start_ = p;
@@ -242,7 +242,7 @@ public:
 				size_type ncap = new_memory(n);
 				auto p = m_allocator_.allocate(ncap, m_start_);
 				if(m_start_ != nullptr) {
-					uninitialized_copy(m_start_, m_last_, p, m_allocator_);
+					uninitialized_move(m_start_, m_last_, p, m_allocator_);
 				}
 				clear();
 				m_start_ = p;
@@ -278,7 +278,7 @@ public:
 			return;
 		}
 		auto p = m_allocator_.allocate(si);
-		uninitialized_copy(m_start_, m_last_, p, m_allocator_);
+		uninitialized_move(m_start_, m_last_, p, m_allocator_);
 		clear();
 
 		m_start_ = p;
@@ -350,10 +350,33 @@ public:
 
 			return m_start_ + dis;
 		} else {
-			for(auto p = m_last_;p != pos;--p) {
-				m_allocator_.construct(p + n - 1, std::move(*(p - 1)));
+			auto move_number = distance(pos, m_last_);
+			if(move_number > n) {
+				// 构造尾部
+				uninitialized_move(m_last_ - n, m_last_, m_last_, m_allocator_);
+
+				// 赋值尾部
+				auto e = m_last_ - (move_number - n) - 1;
+				for(auto i = m_last_ - 1;i != e;--i) {
+					*(i) = std::move(*(i - n));
+				}
+
+				// 赋值中部
+				for(size_t i = 0;i < n;++i) {
+					*(pos + i) = elem;
+				}
+			} else {
+				// 构造尾部
+				uninitialized_move(pos, m_last_, pos + n, m_allocator_);
+
+				// 构造中部
+				uninitialized_fill_n(elem, m_last_, n - move_number, m_allocator_);
+
+				// 赋值中部
+				for(auto p = pos;p != m_last_;++p) {
+					*p = elem;
+				}
 			}
-			uninitialized_fill_n(elem, pos, n, m_allocator_);
 			m_last_ += n;
 			return pos;
 		}
@@ -368,7 +391,7 @@ public:
 
 			uninitialized_move(m_start_, pos, p, m_allocator_);
 			m_allocator_.construct(p + dis, std::move(elem));
-			uninitialized_move(pos, m_last_, p + dis + 1);
+			uninitialized_move(pos, m_last_, p + dis + 1, m_allocator_);
 
 			clear();
 
@@ -378,10 +401,17 @@ public:
 
 			return m_start_ + dis;
 		} else {
-			for(auto p = m_last_;p != pos;--p) {
+			if(pos != m_last_) {
+				auto p = m_last_;
 				m_allocator_.construct(p, std::move(*(p - 1)));
+				--p;
+				for(;p != pos;--p) {
+					*p = std::move(*(p - 1));
+				}
+				*pos = std::move(elem);
+			} else {
+				m_allocator_.construct(pos, std::move(elem));
 			}
-			m_allocator_.construct(pos, std::move(elem));
 			++m_last_;
 			return pos;
 		}
@@ -407,10 +437,33 @@ public:
 
 			return m_start_ + dis;
 		} else {
-			for(auto p = m_last_;p != pos;--p) {
-				m_allocator_.construct(p + n - 1, std::move(*(p - 1)));
+			auto move_number = distance(pos, m_last_);
+			if(move_number > n) {
+				// 构造尾部
+				uninitialized_move(m_last_ - n, m_last_, m_last_, m_allocator_);
+
+				// 赋值尾部
+				auto e = m_last_ - (move_number - n) - 1;
+				for(auto i = m_last_ - 1;i != e;--i) {
+					*(i) = std::move(*(i - n));
+				}
+
+				// 赋值中部
+				for(size_t i = 0;i < n;++i) {
+					*(pos + i) = *(first + i);
+				}
+			} else {
+				// 构造尾部
+				uninitialized_move(pos, m_last_, pos + n, m_allocator_);
+
+				// 构造中部
+				uninitialized_copy(first + move_number, last, m_last_, m_allocator_);
+
+				// 赋值中部
+				for(auto p = pos;p != m_last_;++p, ++first) {
+					*p = *first;
+				}
 			}
-			uninitialized_copy(first, last, pos, m_allocator_);
 			m_last_ += n;
 			return pos;
 		}
@@ -446,16 +499,15 @@ public:
 	}
 
 	iterator erase(iterator pos) {
-		m_allocator_.destory(pos);
-		uninitialized_move(pos + 1, m_last_, pos, m_allocator_);
-		--m_last_;
-		return pos;
+		return erase(pos, pos + 1);
 	}
 
 	iterator erase(iterator first, iterator last) {
 		auto n = distance(first, last);
-		initialized_destory(first, last, m_allocator_);
-		uninitialized_move(last, m_last_, first, m_allocator_);
+		for(auto p = last;p != m_last_;++p) {
+			*(p - n) = *p;
+		}
+		initialized_destory(m_last_ - n, m_last_, m_allocator_);
 		m_last_ -= n;
 		return first;
 	}

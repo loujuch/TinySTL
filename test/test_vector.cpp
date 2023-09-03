@@ -6,16 +6,28 @@
 
 class Test {
 	int n;
+
+	static int create;
+	static int destory;
 public:
 	Test() :n(0) {
+		++create;
 		// std::cout << "default ctor: " << n << std::endl;
 	}
 
 	explicit Test(int m) :n(m) {
+		++create;
 		// std::cout << "arg ctor: " << n << std::endl;
 	}
 
 	Test(const Test &t) :n(t.n) {
+		++create;
+		// std::cout << "copy ctor: " << n << std::endl;
+	}
+
+	Test(Test &&t) :n(t.n) {
+		++create;
+		t.n = 0;
 		// std::cout << "copy ctor: " << n << std::endl;
 	}
 
@@ -27,6 +39,21 @@ public:
 		std::cout << "print: " << n << std::endl;
 	}
 
+	Test &operator=(const Test &t) {
+		if(this != &t) {
+			n = t.n;
+		}
+		return *this;
+	}
+
+	Test &operator=(Test &&t) {
+		if(this != &t) {
+			n = t.n;
+			t.n = 0;
+		}
+		return *this;
+	}
+
 	bool operator==(const Test &t) const {
 		return n == t.n;
 	}
@@ -36,9 +63,17 @@ public:
 	}
 
 	~Test() {
+		++destory;
 		// std::cout << "dtor: " << n << std::endl;
 	}
+
+	static void print_static() {
+		std::cout << "create: " << create << " destory: " << destory << std::endl;
+	}
 };
+
+int Test::create = 0;
+int Test::destory = 0;
 
 void show(const stl::Vector<Test> &t) {
 	std::cout << "size: " << t.size() << " capacity: " << t.capacity() << std::endl;
@@ -181,5 +216,6 @@ void main_test() {
 
 int main() {
 	main_test();
+	Test::print_static();
 	return 0;
 }
