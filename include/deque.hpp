@@ -489,7 +489,7 @@ public:
 
 	// 增删操作
 	iterator insert(iterator pos, const value_type &elem) {
-		return insert(pos, 1, elem);
+		return insert(pos, (size_type)1, elem);
 	}
 
 	iterator insert(iterator pos, value_type &&elem) {

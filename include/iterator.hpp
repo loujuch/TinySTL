@@ -101,6 +101,9 @@ __distance(RandomAccessIterator first, RandomAccessIterator last, random_access_
 template <typename InputIterator>
 static inline typename iterator_traits<InputIterator>::difference_type
 distance(InputIterator first, InputIterator last) {
+	if(first == last) {
+		return 0;
+	}
 	return __distance(first, last, iterator_category(first));
 }
 
