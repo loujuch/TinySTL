@@ -63,7 +63,7 @@ public:
 		return m_container_.empty();
 	}
 
-	typename Container::size_type size() const {
+	size_type size() const {
 		return m_container_.size();
 	}
 
@@ -94,6 +94,14 @@ template<class T,
 	class Compare = stl::less<typename Container::value_type>
 >
 class PriorityQueue {
+public:
+	using container_type = Container;
+	using value_type = typename Container::value_type;
+	using value_compare = Compare;
+	using size_type = typename Container::size_type;
+	using reference = typename Container::reference;
+	using const_reference = typename Container::const_reference;
+private:
 	Container m_container_;
 	Compare m_comparator_;
 public:
@@ -137,7 +145,7 @@ public:
 		return *this;
 	}
 
-	typename Container::const_reference top() const {
+	const_reference top() const {
 		return m_container_.front();
 	}
 
@@ -145,7 +153,7 @@ public:
 		return m_container_.empty();
 	}
 
-	typename Container::size_type size() const {
+	size_type size() const {
 		return m_container_.size();
 	}
 
