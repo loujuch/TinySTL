@@ -18,45 +18,53 @@ struct BinaryFunction {
 
 template <typename T>
 struct equal_to :public BinaryFunction<T, T, bool> {
-	bool operator()(const T &a, const T &b) {
+	bool operator()(const T &a, const T &b) const {
 		return a == b;
 	}
 }; // struct equal_to
 
 template <typename T>
 struct not_equal_to :public BinaryFunction<T, T, bool> {
-	bool operator()(const T &a, const T &b) {
+	bool operator()(const T &a, const T &b) const {
 		return a != b;
 	}
 }; // struct not_equal_to
 
 template <typename T>
 struct less :public BinaryFunction<T, T, bool> {
-	bool operator()(const T &a, const T &b) {
+	bool operator()(const T &a, const T &b) const {
 		return a < b;
 	}
 }; // struct less
 
 template <typename T>
 struct less_equal :public BinaryFunction<T, T, bool> {
-	bool operator()(const T &a, const T &b) {
+	bool operator()(const T &a, const T &b) const {
 		return a <= b;
 	}
 }; // struct less_equal
 
 template <typename T>
 struct greater :public BinaryFunction<T, T, bool> {
-	bool operator()(const T &a, const T &b) {
+	bool operator()(const T &a, const T &b) const {
 		return a > b;
 	}
 }; // struct greater
 
 template <typename T>
 struct greater_equal :public BinaryFunction<T, T, bool> {
-	bool operator()(const T &a, const T &b) {
+	bool operator()(const T &a, const T &b) const {
 		return a >= b;
 	}
 }; // struct greater_equal
+
+template <typename T>
+struct Identity :public UnqryFunction<T, T> {
+	T operator()(const T &t) const {
+		return t;
+	}
+};
+
 
 } // namespace stl
 

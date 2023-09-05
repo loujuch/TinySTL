@@ -8,7 +8,13 @@ struct Pair {
 	T1 first;
 	T2 second;
 
-	Pair(T1 first_ = T1(), T2 second_ = T2()) :first(first_), second(second_) {
+	explicit Pair(T1 first_ = T1(), T2 second_ = T2()) :first(first_), second(second_) {
+	}
+
+	Pair(const Pair &p) :first(p.first), second(p.second) {
+	}
+
+	Pair(Pair &&p) :first(std::move(p.first)), second(std::move(p.second)) {
 	}
 
 	bool operator<(const Pair &p) {
