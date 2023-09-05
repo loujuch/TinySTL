@@ -325,6 +325,7 @@ public:
 
 template <typename T>
 class RBIterator :public RBBaseIterator {
+public:
 	template <typename Key, typename Value, typename KeyOfValue, typename Compare, typename ALLOC>
 	friend class RBTree;
 
@@ -683,8 +684,9 @@ public:
 			return 0;
 		}
 		iterator r = upper_bound(key);
+		auto n = distance(l, r);
 		erase(l, r);
-		return distance(l, r);
+		return n;
 	}
 
 	iterator erase(iterator pos) {
@@ -696,8 +698,9 @@ public:
 
 	// TODO: 降低算法复杂度到 log(size)+distance(first, last)
 	iterator erase(iterator first, iterator last) {
-		for(;first != last;++first) {
-			erase(first);
+		iterator tmp = first;
+		while(tmp != last) {
+			tmp = erase(tmp);
 		}
 		return last;
 	}
@@ -751,8 +754,8 @@ public:
 
 		while(x) {
 			y = x;
-			le = compare_vv(x->m_value, tmp->m_value);
-			x = le ? right(x) : left(x);
+			le = compare_vv(tmp->m_value, x->m_value);
+			x = le ? left(x) : right(x);
 		}
 
 		return insert_return(__insert(tmp, y, le), true);
@@ -793,18 +796,7 @@ public:
 	}
 
 	insert_return insert_equal(const value_type &value) {
-		link_type y = m_head_;
-		link_type x = root();
-
-		bool le = true;
-
-		while(x) {
-			y = x;
-			le = compare_vv(x->m_value, value);
-			x = le ? right(x) : left(x);
-		}
-
-		return insert_return(__insert(create_node(value), y, le), true);
+		return emplace_equal(value);
 	}
 
 	insert_return insert_unique(value_type &&value) {
@@ -841,18 +833,7 @@ public:
 	}
 
 	insert_return insert_equal(value_type &&value) {
-		link_type y = m_head_;
-		link_type x = root();
-
-		bool le = true;
-
-		while(x) {
-			y = x;
-			le = compare_vv(x->m_value, value);
-			x = le ? right(x) : left(x);
-		}
-
-		return insert_return(__insert(create_node(std::move(value)), y, le), true);
+		return emplace_equal(std::move(value));
 	}
 
 	void dfs(link_type n) {
