@@ -1,21 +1,19 @@
-#ifndef _MAP_HPP__
-#define _MAP_HPP__
+#ifndef _SET_HPP__
+#define _SET_HPP__
 
 #include "functional.hpp"
 #include "allocator.hpp"
 #include "rb_tree.hpp"
-#include "utility"
 
 namespace stl {
 
-template <typename Key, typename Value, typename Compare = stl::less<Key>,
-	typename ALLOC = stl::Allocator<stl::Pair<const Key, Value>>
+template <typename T, typename Compare = stl::less<const T>,
+	typename ALLOC = stl::Allocator<T>
 >
-class Map {
+class Set {
 public:
-	using key_type = Key;
-	using mapped_type = Value;
-	using value_type = stl::Pair<const Key, Value>;
+	using key_type = T;
+	using value_type = const T;
 	using size_type = ::size_t;
 	using difference_type = ::ptrdiff_t;
 	using key_compare = Compare;
@@ -28,37 +26,32 @@ public:
 	using iterator = RBIterator<value_type>;
 	using const_iterator = const iterator;
 private:
-	struct map_comp_key :public UnqryFunction<value_type, key_type> {
-		key_type operator()(const value_type &l) const {
-			return l.first;
-		}
-	};
 private:
-	RBTree<key_type, value_type, map_comp_key, Compare, ALLOC> m_rb_tree_;
+	RBTree<key_type, value_type, Identity<const value_type>, Compare, ALLOC> m_rb_tree_;
 public:
-	explicit Map(const Compare &comp = Compare()) :m_rb_tree_(comp) {
+	explicit Set(const Compare &comp = Compare()) :m_rb_tree_(comp) {
 	}
 
-	Map(const Map &other) :m_rb_tree_(other.m_rb_tree_) {
+	Set(const Set &other) :m_rb_tree_(other.m_rb_tree_) {
 	}
 
-	Map(Map &&other) :m_rb_tree_(std::move(other.m_rb_tree_)) {
+	Set(Set &&other) :m_rb_tree_(std::move(other.m_rb_tree_)) {
 	}
 
 	template <typename InputIterator>
-	Map(InputIterator first, InputIterator last, const Compare &comp = Compare()) :
-		Map(comp) {
+	Set(InputIterator first, InputIterator last, const Compare &comp = Compare()) :
+		Set(comp) {
 		insert(first, last);
 	}
 
-	Map &operator=(const Map &other) {
+	Set &operator=(const Set &other) {
 		if(this != &other) {
 			m_rb_tree_ = other.m_rb_tree_;
 		}
 		return *this;
 	}
 
-	Map &operator=(Map &&other) {
+	Set &operator=(Set &&other) {
 		if(this != &other) {
 			m_rb_tree_ = std::move(other.m_rb_tree_);
 		}
@@ -69,29 +62,8 @@ public:
 		m_rb_tree_.clear();
 	}
 
-	mapped_type &at(const Key &key) {
-		iterator tmp = find(key);
-		if(tmp == end()) {
-			auto t = emplace(key, mapped_type());
-			tmp = t.first;
-		}
-		return (*tmp).second;
-	}
-
-	mapped_type &operator[](const Key &key) {
-		return at(key);
-	}
-
-	iterator begin() {
-		return m_rb_tree_.begin();
-	}
-
 	const_iterator begin() const {
 		return m_rb_tree_.begin();
-	}
-
-	iterator end() {
-		return m_rb_tree_.end();
 	}
 
 	const_iterator end() const {
@@ -108,10 +80,6 @@ public:
 
 	stl::Pair<iterator, bool> insert(const value_type &value) {
 		return m_rb_tree_.insert_unique(value);
-	}
-
-	stl::Pair<iterator, bool> insert(const stl::Pair<Key, Value> &value) {
-		return m_rb_tree_.emplace_unique(value.first, value.second);
 	}
 
 	stl::Pair<iterator, bool> insert(value_type &&value) {
@@ -138,40 +106,39 @@ public:
 		return m_rb_tree_.erase(first, last);
 	}
 
-	size_type erase(const Key &key) {
+	size_type erase(const key_type &key) {
 		return m_rb_tree_.erase_unique(key);
 	}
 
-	void swap(Map &other) {
+	void swap(Set &other) {
 		m_rb_tree_.swap(other.m_rb_tree_);
 	}
 
-	iterator find(const Key &key) const {
+	iterator find(const key_type &key) const {
 		return m_rb_tree_.find(key);
 	}
 
-	size_type count(const Key &key) const {
+	size_type count(const key_type &key) const {
 		return find(key) == end() ? 0 : 1;
 	}
 
-	iterator lower_bound(const Key &key) const {
+	iterator lower_bound(const key_type &key) const {
 		return m_rb_tree_.lower_bound(key);
 	}
 
-	iterator upper_bound(const Key &key) const {
+	iterator upper_bound(const key_type &key) const {
 		return m_rb_tree_.upper_bound(key);
 	}
 }; // class Map
 
 
-template <typename Key, typename Value, typename Compare = stl::less<Key>,
-	typename ALLOC = stl::Allocator<stl::Pair<const Key, Value>>
+template <typename T, typename Compare = stl::less<T>,
+	typename ALLOC = stl::Allocator<T>
 >
-class MultiMap {
+class MultiSet {
 public:
-	using key_type = Key;
-	using mapped_type = Value;
-	using value_type = stl::Pair<const Key, Value>;
+	using key_type = T;
+	using value_type = T;
 	using size_type = ::size_t;
 	using difference_type = ::ptrdiff_t;
 	using key_compare = Compare;
@@ -184,37 +151,31 @@ public:
 	using iterator = RBIterator<value_type>;
 	using const_iterator = const iterator;
 private:
-	struct map_comp_key :public UnqryFunction<value_type, key_type> {
-		key_type operator()(const value_type &l) const {
-			return l.first;
-		}
-	};
-private:
-	RBTree<key_type, value_type, map_comp_key, Compare, ALLOC> m_rb_tree_;
+	RBTree<key_type, value_type, Identity<value_type>, Compare, ALLOC> m_rb_tree_;
 public:
-	explicit MultiMap(const Compare &comp = Compare()) :m_rb_tree_(comp) {
+	explicit MultiSet(const Compare &comp = Compare()) :m_rb_tree_(comp) {
 	}
 
-	MultiMap(const MultiMap &other) :m_rb_tree_(other.m_rb_tree_) {
+	MultiSet(const MultiSet &other) :m_rb_tree_(other.m_rb_tree_) {
 	}
 
-	MultiMap(MultiMap &&other) :m_rb_tree_(std::move(other.m_rb_tree_)) {
+	MultiSet(MultiSet &&other) :m_rb_tree_(std::move(other.m_rb_tree_)) {
 	}
 
 	template <typename InputIterator>
-	MultiMap(InputIterator first, InputIterator last, const Compare &comp = Compare()) :
-		MultiMap(comp) {
+	MultiSet(InputIterator first, InputIterator last, const Compare &comp = Compare()) :
+		MultiSet(comp) {
 		insert(first, last);
 	}
 
-	MultiMap &operator=(const MultiMap &other) {
+	MultiSet &operator=(const MultiSet &other) {
 		if(this != &other) {
 			m_rb_tree_ = other.m_rb_tree_;
 		}
 		return *this;
 	}
 
-	MultiMap &operator=(MultiMap &&other) {
+	MultiSet &operator=(MultiSet &&other) {
 		if(this != &other) {
 			m_rb_tree_ = std::move(other.m_rb_tree_);
 		}
@@ -225,16 +186,8 @@ public:
 		m_rb_tree_.clear();
 	}
 
-	iterator begin() {
-		return m_rb_tree_.begin();
-	}
-
 	const_iterator begin() const {
 		return m_rb_tree_.begin();
-	}
-
-	iterator end() {
-		return m_rb_tree_.end();
 	}
 
 	const_iterator end() const {
@@ -251,10 +204,6 @@ public:
 
 	stl::Pair<iterator, bool> insert(const value_type &value) {
 		return m_rb_tree_.insert_equal(value);
-	}
-
-	stl::Pair<iterator, bool> insert(const stl::Pair<Key, Value> &value) {
-		return m_rb_tree_.emplace_equal(value.first, value.second);
 	}
 
 	stl::Pair<iterator, bool> insert(value_type &&value) {
@@ -281,19 +230,19 @@ public:
 		return m_rb_tree_.erase(first, last);
 	}
 
-	size_type erase(const Key &key) {
+	size_type erase(const key_type &key) {
 		return m_rb_tree_.erase_equal(key);
 	}
 
-	void swap(MultiMap &other) {
+	void swap(MultiSet &other) {
 		m_rb_tree_.swap(other.m_rb_tree_);
 	}
 
-	iterator find(const Key &key) const {
+	iterator find(const key_type &key) const {
 		return m_rb_tree_.find(key);
 	}
 
-	size_type count(const Key &key) const {
+	size_type count(const key_type &key) const {
 		auto p = find(key);
 		if(p == end()) {
 			return 0;
@@ -302,15 +251,15 @@ public:
 		return distance(p, q);
 	}
 
-	iterator lower_bound(const Key &key) const {
+	iterator lower_bound(const key_type &key) const {
 		return m_rb_tree_.lower_bound(key);
 	}
 
-	iterator upper_bound(const Key &key) const {
+	iterator upper_bound(const key_type &key) const {
 		return m_rb_tree_.upper_bound(key);
 	}
-}; // class MultiMap
+}; // class MultiSet
 
 } // namespace stl
 
-#endif // _MAP_HPP__
+#endif // _SET_HPP__

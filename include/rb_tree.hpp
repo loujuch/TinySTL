@@ -513,9 +513,9 @@ protected:
 
 protected:
 	void shrink_head() {
-		parent(m_head_) = nullptr;
-		left(m_head_) = m_head_;
-		right(m_head_) = m_head_;
+		root() = nullptr;
+		most_left() = m_head_;
+		most_right() = m_head_;
 	}
 
 	link_type clone(link_type parent, link_type source) {
@@ -550,6 +550,9 @@ public:
 
 	RBTree(const RBTree &rbt) :RBTree() {
 		root() = clone(m_head_, rbt.root());
+		if(root() == nullptr) {
+			return;
+		}
 		most_left() = minimum(root());
 		most_right() = maximum(root());
 		m_size_ = rbt.m_size_;
@@ -572,8 +575,12 @@ public:
 			clear();
 
 			root() = clone(m_head_, rb.root());
+			if(root() == nullptr) {
+				return *this;
+			}
 			most_left() = minimum(root());
 			most_right() = maximum(root());
+			m_size_ = rb.m_size_;
 		}
 		return *this;
 	}
