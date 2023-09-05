@@ -65,6 +65,47 @@ struct Identity :public UnqryFunction<T, T> {
 	}
 };
 
+template <typename T>
+struct plus :public BinaryFunction<T, T, T> {
+	T operator()(const T &t1, const T &t2) const {
+		return t1 + t2;
+	}
+};
+
+template <typename T>
+struct minus :public BinaryFunction<T, T, T> {
+	T operator()(const T &t1, const T &t2) const {
+		return t1 - t2;
+	}
+};
+
+template <typename T>
+struct multiplies :public BinaryFunction<T, T, T> {
+	T operator()(const T &t1, const T &t2) const {
+		return t1 * t2;
+	}
+};
+
+template <typename T>
+struct divides :public BinaryFunction<T, T, T> {
+	T operator()(const T &t1, const T &t2) const {
+		return t1 / t2;
+	}
+};
+
+template <typename T>
+struct modulus :public BinaryFunction<T, T, T> {
+	T operator()(const T &t1, const T &t2) const {
+		return t1 % t2;
+	}
+};
+
+template <typename T>
+struct negate :public UnqryFunction<T, T> {
+	T operator()(const T &t) const {
+		return -t;
+	}
+};
 
 } // namespace stl
 
