@@ -14,9 +14,16 @@ T accumulate(InputIterator first, InputIterator last, T init, BOP bop = BOP()) {
 	return std::move(init);
 }
 
-template <typename InputIterator, typename OutputIterator, typename T, typename BOP = minus<T>>
-static OutputIterator __adjacent_difference(InputIterator first, InputIterator last,
-	OutputIterator d_first, T *, BOP op = BOP()) {
+template <typename InputIterator, typename OutputIterator>
+OutputIterator adjacent_difference(InputIterator first, InputIterator last,
+	OutputIterator d_first) {
+	using T = typename iterator_traits<InputIterator>::value_type;
+	return adjacent_difference(first, last, d_first, minus<T>());
+}
+
+template <typename InputIterator, typename OutputIterator, typename BOP>
+OutputIterator adjacent_difference(InputIterator first, InputIterator last,
+	OutputIterator d_first, BOP op) {
 	if(first == last) {
 		return d_first;
 	}
@@ -29,23 +36,19 @@ static OutputIterator __adjacent_difference(InputIterator first, InputIterator l
 }
 
 template <typename InputIterator, typename OutputIterator>
-OutputIterator adjacent_difference(InputIterator first, InputIterator last,
+OutputIterator partial_sum(InputIterator first, InputIterator last,
 	OutputIterator d_first) {
-	return __adjacent_difference(first, last, d_first, value_type(first));
+	using T = typename iterator_traits<InputIterator>::value_type;
+	return partial_sum(first, last, d_first, plus<T>());
 }
 
 template <typename InputIterator, typename OutputIterator, typename BOP>
-OutputIterator adjacent_difference(InputIterator first, InputIterator last,
+OutputIterator partial_sum(InputIterator first, InputIterator last,
 	OutputIterator d_first, BOP op) {
-	return __adjacent_difference(first, last, d_first, value_type(first), op);
-}
-
-template <typename InputIterator, typename OutputIterator, typename T, typename BOP = plus<T>>
-static OutputIterator __partial_sum(InputIterator first, InputIterator last,
-	OutputIterator d_first, T *, BOP op = BOP()) {
 	if(first == last) {
 		return d_first;
 	}
+	using T = typename iterator_traits<InputIterator>::value_type;
 	T tmp = *first++;
 	*d_first++ = tmp;
 	for(;first != last;++first, ++d_first) {
@@ -53,18 +56,6 @@ static OutputIterator __partial_sum(InputIterator first, InputIterator last,
 		*d_first = tmp;
 	}
 	return d_first;
-}
-
-template <typename InputIterator, typename OutputIterator>
-OutputIterator partial_sum(InputIterator first, InputIterator last,
-	OutputIterator d_first) {
-	return __partial_sum(first, last, d_first, value_type(first));
-}
-
-template <typename InputIterator, typename OutputIterator, typename BOP>
-OutputIterator partial_sum(InputIterator first, InputIterator last,
-	OutputIterator d_first, BOP op) {
-	return __partial_sum(first, last, d_first, value_type(first), op);
 }
 
 template <typename InputIterator1, typename InputIterator2, typename T,

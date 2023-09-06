@@ -55,7 +55,7 @@ struct iterator_traits<const T *> {
 	using difference_type = ::ptrdiff_t;
 	using pointer = const T *;
 	using reference = const T &;
-}; // struct iterator_traits<T *>
+}; // struct iterator_traits<const T *>
 
 // 获取迭代器类型
 template <typename I>
