@@ -9,6 +9,7 @@ void main_func() {
 		a[i] = i;
 	}
 
+
 	stl::make_heap(a, a + 10);
 
 	for(int i = 0;i < 10;++i) {
@@ -30,6 +31,7 @@ void main_func() {
 
 	std::cout << std::endl;
 
+
 	stl::sort_heap(a, a + 10);
 
 	for(int i = 0;i < 10;++i) {
@@ -50,6 +52,7 @@ void main_func() {
 	}
 
 	std::cout << std::endl;
+
 
 	a[10] = 8;
 
@@ -74,6 +77,7 @@ void main_func() {
 
 	std::cout << std::endl;
 
+
 	stl::push_heap(a, a + 11);
 
 	for(int i = 0;i < 11;++i) {
@@ -94,10 +98,6 @@ void main_func() {
 	}
 
 	std::cout << std::endl;
-
-	a[11] = -1;
-
-
 }
 
 int main() {

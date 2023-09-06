@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "algo.hpp"
+#include "numeric.hpp"
 #include "vector.hpp"
 
 template <typename I>
@@ -54,6 +55,153 @@ void main_func() {
 	stl::Vector<int> tmp(24);
 	p = stl::merge(num1, num1 + 8, num2, num2 + 7, tmp.begin());
 	show(tmp.begin(), p);
+
+	auto q = stl::partition(tmp.begin(), p, [](int n) {
+		return n % 2 != 0;
+		});
+	show(tmp.begin(), q);
+	show(q, p);
+
+	q = stl::remove(tmp.begin(), p, 3);
+	show(tmp.begin(), q);
+	show(q, p);
+
+	stl::replace_if(tmp.begin(), p, [](int i) {return i == 3;}, 2);
+	show(tmp.begin(), p);
+
+	show(tmp.begin(), p);
+	stl::reverse(tmp.begin(), p);
+	show(tmp.begin(), p);
+
+	stl::Vector<int> ttmp(tmp.size());
+	q = stl::reverse_copy(tmp.begin(), p, ttmp.begin());
+	show(tmp.begin(), p);
+	show(ttmp.begin(), q);
+
+	q = stl::rotate_copy(tmp.begin(), tmp.begin() + 5, p, ttmp.begin());
+	show(ttmp.begin(), q);
+
+	stl::rotate(tmp.begin(), tmp.begin() + 5, p);
+	show(tmp.begin(), p);
+
+	stl::Vector<int> test0(num1, num1 + 8);
+	p = stl::search(test0.begin(), test0.end(), num1 + 4, num1 + 6);
+	show(test0.begin(), p);
+	show(p, test0.end());
+
+	num1[4] = 1024;
+	if(stl::search(test0.begin(), test0.end(), num1 + 3, num1 + 5) == test0.end()) {
+		std::cout << "Yes" << std::endl;
+	} else {
+		std::cout << "No" << std::endl;
+	}
+
+	p = stl::search_n(test0.begin(), test0.end(), 1, 3);
+	show(test0.begin(), p);
+	show(p, test0.end());
+
+	p = stl::search_n(test0.begin(), test0.end(), 2, 3);
+	show(test0.begin(), p);
+	show(p, test0.end());
+
+	test0[1] = 3;
+	p = stl::search_n(test0.begin(), test0.end(), 2, 3);
+	show(test0.begin(), p);
+	show(p, test0.end());
+
+	stl::tranform(test0.begin(), test0.end(), test0.begin(), [](int i) {return i * 2;});
+	show(test0);
+
+	show(num1, num1 + 8);
+	stl::tranform(test0.begin(), test0.end(), num1, test0.begin(), [](int i, int j) {return i + j;});
+	show(test0);
+
+	test0[0] = 0;
+	test0[1] = 0;
+
+	test0[4] = 10;
+	test0[5] = 10;
+
+	p = stl::unique(test0.begin(), test0.end());
+	show(test0.begin(), p);
+	show(p, test0.end());
+
+	stl::iota(test0.begin(), test0.end(), 0);
+	stl::tranform(test0.begin(), test0.end(), test0.begin(), [](int i) {return i * 2;});
+	show(test0);
+
+	p = stl::lower_bound(test0.begin(), test0.end(), 3);
+	show(test0.begin(), p);
+	show(p, test0.end());
+	p = stl::lower_bound(test0.begin(), test0.end(), 4);
+	show(test0.begin(), p);
+	show(p, test0.end());
+
+	p = stl::upper_bound(test0.begin(), test0.end(), 3);
+	show(test0.begin(), p);
+	show(p, test0.end());
+	p = stl::upper_bound(test0.begin(), test0.end(), 4);
+	show(test0.begin(), p);
+	show(p, test0.end());
+
+	if(stl::binary_search(test0.begin(), test0.end(), 3)) {
+		std::cout << "Yes" << std::endl;
+	} else {
+		std::cout << "No" << std::endl;
+	}
+
+	if(stl::binary_search(test0.begin(), test0.end(), 4)) {
+		std::cout << "Yes" << std::endl;
+	} else {
+		std::cout << "No" << std::endl;
+	}
+
+	stl::next_permutation(test0.begin(), test0.end());
+	show(test0);
+
+	stl::prev_permutation(test0.begin(), test0.end());
+	show(test0);
+
+	stl::random_shuffle(test0.begin(), test0.end());
+	show(test0);
+
+	stl::partial_sort(test0.begin(), test0.begin() + 4, test0.end());
+	show(test0);
+	stl::random_shuffle(test0.begin(), test0.end());
+	show(test0);
+
+	stl::Vector<int> test1(test0.size() - 3);
+	stl::partial_sort_copy(test0.begin(), test0.end(), test1.begin(), test1.end());
+	show(test1);
+
+	test1.resize(test0.size());
+	stl::random_shuffle(test0.begin(), test0.end());
+	show(test0);
+
+	stl::sort(test0.begin(), test0.end());
+	show(test0);
+
+	stl::random_shuffle(test0.begin(), test0.end());
+	show(test0);
+
+	stl::sort(test0.begin(), test0.begin() + 3);
+	stl::sort(test0.begin() + 3, test0.end());
+	show(test0);
+
+	stl::inplace_merge(test0.begin(), test0.begin() + 3, test0.end());
+	show(test0);
+
+	stl::random_shuffle(test0.begin(), test0.end());
+	show(test0);
+
+	stl::nth_element(test0.begin(), test0.begin() + 4, test0.end());
+	show(test0);
+
+	stl::random_shuffle(test0.begin(), test0.end());
+	show(test0);
+
+	stl::mergesort(test0.begin(), test0.end());
+	show(test0);
 }
 
 int main() {
