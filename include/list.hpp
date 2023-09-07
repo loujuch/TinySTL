@@ -5,6 +5,7 @@
 #include "allocator.hpp"
 #include "uninitialized.hpp"
 #include "functional.hpp"
+#include "reverse_iterator.hpp"
 
 namespace stl {
 
@@ -109,6 +110,8 @@ public:
 
 	using iterator = ListIterator<value_type>;
 	using const_iterator = const ListIterator<value_type>;
+	using reverse_iterator = ReverseIterator<iterator>;
+	using const_reverse_iterator = const ReverseIterator<iterator>;
 private:
 	typename ALLOC::template rebind<Node<T>>::other m_allocator_;
 
@@ -317,6 +320,21 @@ public:
 
 	inline const_iterator end() const {
 		return m_tail_;
+	}
+	inline reverse_iterator rbegin() {
+		return reverse_iterator(end());
+	}
+
+	inline reverse_iterator rend() {
+		return reverse_iterator(begin());
+	}
+
+	inline const_reverse_iterator rbegin() const {
+		return reverse_iterator(end());
+	}
+
+	inline const_reverse_iterator rend() const {
+		return reverse_iterator(begin());
 	}
 
 	// 容量相关

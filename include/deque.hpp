@@ -4,6 +4,7 @@
 #include "iterator.hpp"
 #include "uninitialized.hpp"
 #include "allocator.hpp"
+#include "reverse_iterator.hpp"
 
 #include <string.h>
 
@@ -159,6 +160,8 @@ public:
 
 	using iterator = DequeIterator<T, BufferSize>;
 	using const_iterator = const iterator;
+	using reverse_iterator = ReverseIterator<iterator>;
+	using const_reverse_iterator = const ReverseIterator<iterator>;
 
 	using map_type = pointer;
 	using map_pointer = map_type *;
@@ -398,20 +401,36 @@ public:
 		return *(m_last_ - 1);
 	}
 
-	iterator begin() {
+	inline iterator begin() {
 		return m_first_;
 	}
 
-	const_iterator begin() const {
+	inline const_iterator begin() const {
 		return m_first_;
 	}
 
-	iterator end() {
+	inline iterator end() {
 		return m_last_;
 	}
 
-	const_iterator end() const {
+	inline const_iterator end() const {
 		return m_last_;
+	}
+
+	inline reverse_iterator rbegin() {
+		return reverse_iterator(end());
+	}
+
+	inline reverse_iterator rend() {
+		return reverse_iterator(begin());
+	}
+
+	inline const_reverse_iterator rbegin() const {
+		return reverse_iterator(end());
+	}
+
+	inline const_reverse_iterator rend() const {
+		return reverse_iterator(begin());
 	}
 
 	bool empty() const {

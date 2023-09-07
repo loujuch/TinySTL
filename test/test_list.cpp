@@ -1,5 +1,6 @@
 #include "list.hpp"
 #include "vector.hpp"
+#include "numeric.hpp"
 
 #include <iostream>
 
@@ -333,6 +334,17 @@ void main_test() {
 		return t1.getn() < t2.getn();
 		});
 	test_show(list1);
+
+	stl::List<int> tmp1(1024);
+	stl::iota(tmp1.begin(), tmp1.end(), 0);
+	for(int i : tmp1) {
+		std::cout << i << ' ';
+	}
+	std::cout << std::endl;
+	for(auto i = tmp1.rbegin(); i != tmp1.rend();++i) {
+		std::cout << *i << ' ';
+	}
+	std::cout << std::endl;
 }
 
 int main() {

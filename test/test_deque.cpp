@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "deque.hpp"
+#include "numeric.hpp"
 
 class Test {
 	int n;
@@ -210,6 +211,17 @@ void main_test() {
 	deque0.emplace_front(2);
 	deque0.emplace_front(3);
 	test_show(deque0);
+
+	stl::Deque<int> tmp1(1024);
+	stl::iota(tmp1.begin(), tmp1.end(), 0);
+	for(int i : tmp1) {
+		std::cout << i << ' ';
+	}
+	std::cout << std::endl;
+	for(auto i = tmp1.rbegin(); i != tmp1.rend();++i) {
+		std::cout << *i << ' ';
+	}
+	std::cout << std::endl;
 }
 
 int main() {

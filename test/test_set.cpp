@@ -47,6 +47,12 @@ void main_func() {
 	set1 = std::move(set2);
 	show(set1);
 	show(set2);
+
+	show(set1);
+	for(auto i = set1.rbegin();i != set1.rend();++i) {
+		std::cout << *i << ' ';
+	}
+	std::cout << std::endl;
 }
 
 int main() {

@@ -40,6 +40,12 @@ void main_func() {
 
 	auto map2 = std::move(map0);
 	show(map2);
+
+	show(map2);
+	for(auto i = map2.rbegin();i != map2.rend();++i) {
+		std::cout << '[' << i->first << ' ' << i->second << ']' << ' ';
+	}
+	std::cout << std::endl;
 }
 
 int main() {

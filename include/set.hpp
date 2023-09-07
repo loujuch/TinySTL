@@ -25,7 +25,8 @@ public:
 
 	using iterator = RBIterator<value_type>;
 	using const_iterator = const iterator;
-private:
+	using reverse_iterator = ReverseIterator<iterator>;
+	using const_reverse_iterator = const ReverseIterator<iterator>;
 private:
 	RBTree<key_type, value_type, Identity<const value_type>, Compare, ALLOC> m_rb_tree_;
 public:
@@ -62,12 +63,20 @@ public:
 		m_rb_tree_.clear();
 	}
 
-	const_iterator begin() const {
+	inline const_iterator begin() const {
 		return m_rb_tree_.begin();
 	}
 
-	const_iterator end() const {
+	inline const_iterator end() const {
 		return m_rb_tree_.end();
+	}
+
+	inline reverse_iterator rbegin() const {
+		return m_rb_tree_.rbegin();
+	}
+
+	inline reverse_iterator rend() const {
+		return m_rb_tree_.rend();
 	}
 
 	size_type size() const {
@@ -150,6 +159,8 @@ public:
 
 	using iterator = RBIterator<value_type>;
 	using const_iterator = const iterator;
+	using reverse_iterator = ReverseIterator<iterator>;
+	using const_reverse_iterator = const ReverseIterator<iterator>;
 private:
 	RBTree<key_type, value_type, Identity<value_type>, Compare, ALLOC> m_rb_tree_;
 public:
@@ -186,12 +197,20 @@ public:
 		m_rb_tree_.clear();
 	}
 
-	const_iterator begin() const {
+	inline const_iterator begin() const {
 		return m_rb_tree_.begin();
 	}
 
-	const_iterator end() const {
+	inline const_iterator end() const {
 		return m_rb_tree_.end();
+	}
+
+	inline reverse_iterator rbegin() const {
+		return m_rb_tree_.rbegin();
+	}
+
+	inline reverse_iterator rend() const {
+		return m_rb_tree_.rend();
 	}
 
 	size_type size() const {

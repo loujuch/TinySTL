@@ -1,8 +1,8 @@
 #include <iostream>
 
 #include "vector.hpp"
-
-#include <vector>
+#include "alogrithm.hpp"
+#include "numeric.hpp"
 
 class Test {
 	int n;
@@ -212,6 +212,17 @@ void main_test() {
 	stl::swap(test0, test1);
 	test_show(test0);
 	test_show(test1);
+
+	stl::Vector<int> tmp1(1024);
+	stl::iota(tmp1.begin(), tmp1.end(), 0);
+	for(int i : tmp1) {
+		std::cout << i << ' ';
+	}
+	std::cout << std::endl;
+	for(auto i = tmp1.rbegin(); i != tmp1.rend();++i) {
+		std::cout << *i << ' ';
+	}
+	std::cout << std::endl;
 }
 
 int main() {

@@ -55,6 +55,12 @@ void main_func() {
 	show(set2);
 
 	std::cout << set1.count(1) << std::endl;
+
+	show(set1);
+	for(auto i = set1.rbegin();i != set1.rend();++i) {
+		std::cout << *i << ' ';
+	}
+	std::cout << std::endl;
 }
 
 int main() {

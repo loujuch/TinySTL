@@ -5,6 +5,7 @@
 #include "functional.hpp"
 #include "allocator.hpp"
 #include "utility.hpp"
+#include "reverse_iterator.hpp"
 
 namespace stl {
 
@@ -398,6 +399,8 @@ public:
 
 	using iterator = RBIterator<value_type>;
 	using const_iterator = const RBIterator<value_type>;
+	using reverse_iterator = ReverseIterator<iterator>;
+	using const_reverse_iterator = const ReverseIterator<iterator>;
 
 	using insert_return = Pair<iterator, bool>;
 
@@ -617,6 +620,14 @@ public:
 
 	inline iterator end() const {
 		return iterator(m_head_);
+	}
+
+	inline reverse_iterator rbegin() const {
+		return reverse_iterator(end());
+	}
+
+	inline reverse_iterator rend() const {
+		return reverse_iterator(begin());
 	}
 
 	inline size_type size() const {
