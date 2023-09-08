@@ -853,21 +853,6 @@ public:
 	insert_return insert_equal(value_type &&value) {
 		return emplace_equal(std::move(value));
 	}
-
-	void dfs(link_type n) {
-		if(n == nullptr) {
-			std::cout << "null ";
-			return;
-		}
-		std::cout << n->m_value << ':' << n->m_color << ' ';
-		dfs(left(n));
-		dfs(right(n));
-	}
-
-	void show() {
-		dfs(root());
-		std::cout << std::endl;
-	}
 protected:
 	void __erase(link_type z) {
 		if(m_size_ == 1) {

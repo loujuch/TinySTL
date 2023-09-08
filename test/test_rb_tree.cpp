@@ -18,24 +18,21 @@ void main_func() {
 
 	rb.insert_unique(1);
 	rb.insert_unique(1);
-	rb.show();
+
 	show(rb);
-
-
 	rb.insert_unique(3);
-	rb.show();
+
 	show(rb);
 	rb.insert_unique(2);
-	rb.show();
+
 	show(rb);
 	rb.insert_unique(5);
-	rb.show();
+
 	show(rb);
 	rb.insert_unique(-1);
-	rb.show();
+
 	show(rb);
 	rb.insert_unique(10);
-	rb.show();
 	show(rb);
 
 	for(int i = 0;i < 1024;++i) {
@@ -44,18 +41,16 @@ void main_func() {
 	for(int i = 0;i > -1024;--i) {
 		rb.insert_unique(i);
 	}
-	// rb.show();
 	show(rb);
 
 	for(int i = -1020;i < 1020;++i) {
 		rb.erase_unique(i);
-		// rb.show();
 		// show(rb);
 	}
 	show(rb);
 }
 
-struct get_key :public stl::UnqryFunction<stl::Pair<int, int>, int> {
+struct get_key :public stl::UnaryFunction<stl::Pair<int, int>, int> {
 	int operator()(const stl::Pair<int, int> &p) const {
 		return p.first;
 	}

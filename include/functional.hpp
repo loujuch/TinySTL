@@ -4,13 +4,15 @@
 namespace stl {
 
 template <typename Arg, typename Res>
-struct UnqryFunction {
-	using argument = Arg;
-	using result = Res;
-}; // struct UnqryFunction
+struct UnaryFunction {
+public:
+	using argument_type = Arg;
+	using result_type = Res;
+}; // struct UnaryFunction
 
 template <typename Arg1, typename Arg2, typename Res>
 struct BinaryFunction {
+public:
 	using first_argument_type = Arg1;
 	using second_argument_type = Arg2;
 	using result_type = Res;
@@ -59,7 +61,7 @@ struct greater_equal :public BinaryFunction<T, T, bool> {
 }; // struct greater_equal
 
 template <typename T>
-struct Identity :public UnqryFunction<T, T> {
+struct Identity :public UnaryFunction<T, T> {
 	T operator()(const T &t) const {
 		return t;
 	}
@@ -101,11 +103,49 @@ struct modulus :public BinaryFunction<T, T, T> {
 };
 
 template <typename T>
-struct negate :public UnqryFunction<T, T> {
+struct negate :public UnaryFunction<T, T> {
 	T operator()(const T &t) const {
 		return -t;
 	}
 };
+
+template <typename Pred>
+class unary_negate :public UnaryFunction<typename Pred::argument_type, bool> {
+protected:
+	Pred m_pred_;
+public:
+	explicit unary_negate(const Pred &pred) :m_pred_(pred) {
+	}
+
+	bool operator()(const typename Pred::argument_type &arg) {
+		return !m_pred_(arg);
+	}
+}; // class unary_negate
+
+template <typename Pred>
+unary_negate<Pred> not1(const Pred &pred) {
+	return unary_negate<Pred>(pred);
+}
+
+template <typename Pred>
+class binary_negate :public BinaryFunction<typename Pred::first_argument_type,
+	typename Pred::second_argument_type, bool> {
+protected:
+	Pred m_pred_;
+public:
+	explicit binary_negate(const Pred &pred) :m_pred_(pred) {
+	}
+
+	bool operator()(const typename Pred::first_argument_type &arg1,
+		const typename Pred::second_argument_type &arg2) {
+		return !m_pred_(arg1, arg2);
+	}
+}; // class binary_negate
+
+template <typename Pred>
+binary_negate<Pred> not2(const Pred &pred) {
+	return binary_negate<Pred>(pred);
+}
 
 } // namespace stl
 

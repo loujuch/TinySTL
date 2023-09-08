@@ -30,7 +30,7 @@ public:
 	using reverse_iterator = ReverseIterator<iterator>;
 	using const_reverse_iterator = const ReverseIterator<iterator>;
 private:
-	struct map_comp_key :public UnqryFunction<value_type, key_type> {
+	struct map_comp_key :public UnaryFunction<value_type, key_type> {
 		key_type operator()(const value_type &l) const {
 			return l.first;
 		}
@@ -196,7 +196,7 @@ public:
 	using reverse_iterator = ReverseIterator<iterator>;
 	using const_reverse_iterator = const ReverseIterator<iterator>;
 private:
-	struct map_comp_key :public UnqryFunction<value_type, key_type> {
+	struct map_comp_key :public UnaryFunction<value_type, key_type> {
 		key_type operator()(const value_type &l) const {
 			return l.first;
 		}
