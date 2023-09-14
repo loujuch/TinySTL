@@ -908,12 +908,12 @@ protected:
 		--m_size_;
 	}
 
-	void erase_rb_tree_rebanlance(link_type y, link_type &x) {
+	void erase_rb_tree_rebanlance(link_type y, link_type x) {
 		if(is_red(y)) {
 			return;
 		}
-		link_type p = parent(x);
 		while(x != root() && is_black(x)) {
+			link_type p = parent(x);
 			if(x == left(p)) {
 				link_type b = right(p);
 				if(is_red(b)) {
