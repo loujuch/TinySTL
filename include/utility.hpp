@@ -22,7 +22,6 @@ struct Pair {
 	}
 };
 
-
 } // namespace stl
 
 #endif // _UTILITY_HPP__

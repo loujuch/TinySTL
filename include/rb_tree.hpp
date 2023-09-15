@@ -897,9 +897,7 @@ protected:
 			right(p) = x;
 		}
 
-		if(x != nullptr) {
-			erase_rb_tree_rebanlance(y, x);
-		}
+		erase_rb_tree_rebanlance(p, y, x);
 
 		// 删去结点
 		destory_node(y);
@@ -908,12 +906,11 @@ protected:
 		--m_size_;
 	}
 
-	void erase_rb_tree_rebanlance(link_type y, link_type x) {
+	void erase_rb_tree_rebanlance(link_type p, link_type y, link_type x) {
 		if(is_red(y)) {
 			return;
 		}
 		while(x != root() && is_black(x)) {
-			link_type p = parent(x);
 			if(x == left(p)) {
 				link_type b = right(p);
 				if(is_red(b)) {
