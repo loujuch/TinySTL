@@ -17,7 +17,3 @@ foreach(test_file IN LISTS TEST_SOURCES)
 	get_filename_component(test_program ${test_file} NAME_WE ABSOLUTE)
 	add_executable(${test_program} ${test_file})
 endforeach(test_file)
-
-# add_executable(${Target} ${SRCS})
-
-# target_link_libraries(${Target} log event pthread )

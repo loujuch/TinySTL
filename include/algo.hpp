@@ -7,31 +7,6 @@
 
 namespace stl {
 
-// 将指向的洞运往尾部
-template <typename RandomIterator, typename Compare>
-static void __remove_heap(RandomIterator first, RandomIterator last, Compare comp,
-	RandomIterator hole) {
-	if(first == last) {
-		return;
-	}
-	using difference_type = typename iterator_traits<RandomIterator>::difference_type;
-
-	difference_type size = distance(first, last);
-	difference_type i = distance(first, hole);
-
-	while(i < size) {
-		difference_type left = (i << 1) + 1;
-		difference_type right = left + 1;
-		if(right >= size) {
-			std::swap(*(first + i), *(last - 1));
-			break;
-		}
-		difference_type j = comp(*(first + left), *(first + right)) ? right : left;
-		std::swap(*(first + i), *(first + j));
-		i = j;
-	}
-}
-
 template <typename RandomIterator, typename Compare>
 static void __adjust_heap(RandomIterator first, RandomIterator last,
 	Compare comp, RandomIterator hole) {
@@ -157,7 +132,8 @@ void pop_heap(RandomIterator first, RandomIterator last) {
 
 template <typename RandomIterator, typename Compare>
 void pop_heap(RandomIterator first, RandomIterator last, Compare comp) {
-	__remove_heap(first, last, comp, first);
+	iter_swap(first, last - 1);
+	__adjust_heap(first, last - 1, comp, first);
 }
 
 template <typename RandomIterator>
