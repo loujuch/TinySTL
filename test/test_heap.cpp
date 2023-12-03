@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "alogrithm.hpp"
+#include "algorithm.hpp"
 
 void main_func() {
 	int a[1024] = { 0 };

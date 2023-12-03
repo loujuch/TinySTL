@@ -4,7 +4,7 @@
 #include "deque.hpp"
 #include "vector.hpp"
 #include "functional.hpp"
-#include "alogrithm.hpp"
+#include "algorithm.hpp"
 
 namespace stl {
 

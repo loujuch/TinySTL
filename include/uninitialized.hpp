@@ -8,11 +8,6 @@ namespace stl {
 
 namespace {
 
-template <typename I>
-constexpr typename I::pointer pointer_traits(I p) {
-	return pointer_traits(p.base());
-}
-
 template <typename T>
 constexpr T *pointer_traits(T *p) {
 	return p;
@@ -21,6 +16,11 @@ constexpr T *pointer_traits(T *p) {
 template <typename T>
 const T *pointer_traits(const T *p) {
 	return p;
+}
+
+template <typename I>
+constexpr typename I::pointer pointer_traits(I p) {
+	return pointer_traits(p.base());
 }
 
 } // namespace

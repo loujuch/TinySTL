@@ -76,15 +76,16 @@ public:
 		m_ptr_ = m_ptr_->m_prev_;
 		return out;
 	}
-	inline T &operator *() {
+
+	inline T &operator *() const {
 		return m_ptr_->m_value_;
 	}
 
-	inline T *operator->() {
+	inline T *operator->() const {
 		return &(m_ptr_->m_value_);
 	}
 
-	inline pointer base() {
+	inline pointer base() const {
 		return m_ptr_;
 	}
 

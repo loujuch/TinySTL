@@ -3,6 +3,26 @@
 
 namespace stl {
 
+template<typename T>
+struct remove_reference {
+	using type = T;
+};
+
+template<typename T>
+struct remove_reference<T &> {
+	using type = T;
+};
+
+template<typename T>
+struct remove_reference<T &&> {
+	using type = T;
+};
+
+template <typename T>
+typename remove_reference<T>::type &&move(T &&t) {
+	return static_cast<typename remove_reference<T>::type &&>(t);
+}
+
 template <typename T1, typename T2>
 struct Pair {
 	T1 first;
@@ -14,7 +34,7 @@ struct Pair {
 	Pair(const Pair &p) :first(p.first), second(p.second) {
 	}
 
-	Pair(Pair &&p) :first(std::move(p.first)), second(std::move(p.second)) {
+	Pair(Pair &&p) :first(move(p.first)), second(move(p.second)) {
 	}
 
 	bool operator<(const Pair &p) {

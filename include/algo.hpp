@@ -116,7 +116,7 @@ void push_heap(RandomIterator first, RandomIterator last, Compare comp) {
 	while(i != 0) {
 		difference_type p = (i - 1) >> 1;
 		if(comp(*(first + p), *(first + i))) {
-			std::swap(*(first + p), *(first + i));
+			stl::swap(*(first + p), *(first + i));
 		} else {
 			break;
 		}
@@ -959,9 +959,10 @@ template <typename RandomAccessIterator, typename Size, typename Compare>
 static void __introsort(RandomAccessIterator first, RandomAccessIterator last,
 	Size depth_limit, Compare comp) {
 
+	ptrdiff_t d = distance(first, last);
 	// 元素较少，直接插入排序
-	if(distance(first, last) < threshold) {
-		__insertion_sort(first, last, comp);
+	if(d < threshold) {
+		return __insertion_sort(first, last, comp);
 	}
 	if(depth_limit == 0) {
 		// 递归过深，使用堆排序
@@ -971,7 +972,7 @@ static void __introsort(RandomAccessIterator first, RandomAccessIterator last,
 
 	// 使用快速排序
 	auto cut = __unguarded_partition(first, last,
-		__median(*first, *(first + ((last - first) >> 1)), *(last - 1), comp), comp);
+		__median(*first, *(first + (d >> 1)), *(last - 1), comp), comp);
 
 	// 递归处理
 	__introsort(first, cut, depth_limit - 1, comp);

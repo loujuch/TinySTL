@@ -48,9 +48,9 @@ void iter_swap(ForwardIterator1 a, ForwardIterator2 b) {
 		return;
 	}
 	using T = typename iterator_traits<ForwardIterator1>::value_type;
-	T tmp = std::move(*a);
-	*a = std::move(*b);
-	*b = std::move(tmp);
+	T tmp = move(*a);
+	*a = move(*b);
+	*b = move(tmp);
 }
 
 template <typename ForwardIterator1, typename ForwardIterator2>
@@ -86,9 +86,9 @@ const T &min(const T &a, const T &b, Compare comp = Compare()) {
 
 template <typename T>
 void swap(T &a, T &b) {
-	T tmp = std::move(a);
-	a = std::move(b);
-	b = std::move(tmp);
+	T tmp = move(a);
+	a = move(b);
+	b = move(tmp);
 }
 
 template <typename InputIterator1, typename InputIterator2>

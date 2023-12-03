@@ -1,6 +1,8 @@
 #ifndef _REVERSE_ITERATOR_HPP__
 #define _REVERSE_ITERATOR_HPP__
 
+#include "iterator.hpp"
+
 namespace stl {
 
 template <typename I>

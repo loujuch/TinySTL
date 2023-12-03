@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "vector.hpp"
-#include "alogrithm.hpp"
+#include "algorithm.hpp"
 
 void show(const stl::Vector<int> &v) {
 	std::cout << "size: " << v.size() << std::endl;

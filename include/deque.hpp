@@ -4,6 +4,7 @@
 #include "iterator.hpp"
 #include "uninitialized.hpp"
 #include "allocator.hpp"
+#include "algobase.hpp"
 #include "reverse_iterator.hpp"
 
 #include <string.h>
@@ -358,10 +359,7 @@ public:
 
 	void swap(self &d) {
 		if(this != &d) {
-			std::swap(m_first_, d.m_first_);
-			std::swap(m_last_, d.m_last_);
-			std::swap(m_map_first_, d.m_map_first_);
-			std::swap(m_map_last_, d.m_last_);
+			stl::swap(*this, d);
 		}
 	}
 

@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "vector.hpp"
-#include "alogrithm.hpp"
+#include "algorithm.hpp"
 #include "numeric.hpp"
 
 class Test {

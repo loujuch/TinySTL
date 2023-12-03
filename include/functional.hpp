@@ -1,6 +1,8 @@
 #ifndef _FUNCTIONAL_HPP__
 #define _FUNCTIONAL_HPP__
 
+#include <stdint.h>
+
 namespace stl {
 
 template <typename Arg, typename Res>
@@ -146,6 +148,88 @@ template <typename Pred>
 binary_negate<Pred> not2(const Pred &pred) {
 	return binary_negate<Pred>(pred);
 }
+
+template <typename Key>
+struct stlHash {
+	size_t operator()(const Key &key) {
+		return key.hash();
+	}
+};
+
+template <>
+struct stlHash<char> {
+	size_t operator()(char key) {
+		size_t value = key;
+		value = value | (value << 8);
+		value = value | (value << 16);
+		if(sizeof(size_t) == 64) {
+			value = value | (value << 32);
+		}
+		return value;
+	}
+};
+
+template <>
+struct stlHash<int16_t> {
+	size_t operator()(int16_t key) {
+		size_t value = key;
+		value = value | (value << 16);
+		if(sizeof(size_t) == 64) {
+			value = value | (value << 32);
+		}
+		return value;
+	}
+};
+
+template <>
+struct stlHash<uint16_t> {
+	size_t operator()(uint16_t key) {
+		size_t value = key;
+		value = value | (value << 16);
+		if(sizeof(size_t) == 64) {
+			value = value | (value << 32);
+		}
+		return value;
+	}
+};
+
+template <>
+struct stlHash<int32_t> {
+	size_t operator()(int32_t key) {
+		size_t value = key;
+		if(sizeof(size_t) == 64) {
+			value = value | (value << 32);
+		}
+		return value;
+	}
+};
+
+template <>
+struct stlHash<uint32_t> {
+	size_t operator()(uint32_t key) {
+		size_t value = key;
+		if(sizeof(size_t) == 64) {
+			value = value | (value << 32);
+		}
+		return value;
+	}
+};
+
+template <>
+struct stlHash<int64_t> {
+	size_t operator()(int64_t key) {
+		size_t value = key;
+		return value;
+	}
+};
+
+template <>
+struct stlHash<uint64_t> {
+	size_t operator()(uint64_t key) {
+		size_t value = key;
+		return value;
+	}
+};
 
 } // namespace stl
 
